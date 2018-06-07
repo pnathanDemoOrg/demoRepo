@@ -6,54 +6,55 @@ pipeline {
     stage('Say Hello') {
       steps {
         echo "Hello ${params.Name}!"
-        sh 'java -version'
-        echo "${TEST_USER_USR}"
-        echo "${TEST_USER_PSW}"
-      }
+          sh 'java -version'
+          echo "${TEST_USER_USR}"
+          echo "${TEST_USER_PSW}"
+          }
     }
     stage('Testing') {
       failFast true
-      parallel {
+        parallel {
         stage('Java 8') {
           agent {
             label 'jdk8'
-          }
+              }
           steps {
             sh 'java -version'
-            sleep(time: 10, unit: 'SECONDS')
-          }
+              sleep(time: 10, unit: 'SECONDS')
+              }
         }
         stage('Java 9') {
           agent {
             label 'jdk9'
-          }
+              }
           steps {
             sh 'java -version'
-            sleep(time: 20, unit: 'SECONDS')
+              sleep(time: 20, unit: 'SECONDS')
+              }
+        }
+        stage('Maven8 Container') {
+          agent { label 'jdk9' }
+          steps {
+            container('maven8') {
+              sh 'mvn -v'
+                }
           }
         }
-      stage('Maven8 Container') {
-            agent { label 'jdk9' }
-            steps {
-              container('maven8') {
-                sh 'mvn -v'
-              }
-            }
+      }
+    }
+    environment {
+      MY_NAME = 'Mary'
+        TEST_USER = credentials('test-user')
+        }
+    post {
+      aborted {
+        echo 'Why didn\'t you push my button?'
+
           }
-}
-  }
-  environment {
-    MY_NAME = 'Mary'
-    TEST_USER = credentials('test-user')
-  }
-  post {
-    aborted {
-      echo 'Why didn\'t you push my button?'
 
     }
-
-  }
-  parameters {
-    string(name: 'Name', defaultValue: 'whoever you are', description: 'Who should I say hi to?')
+    parameters {
+      string(name: 'Name', defaultValue: 'whoever you are', description: 'Who should I say hi to?')
+        }
   }
 }
