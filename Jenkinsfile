@@ -34,6 +34,15 @@ pipeline {
         }
       }
     }
+
+             stage('Maven8 Container') {
+            agent { label 'jdk9' }
+            steps {
+              container('maven8') {
+                sh 'mvn -v'
+              }
+            }
+          }
   }
   environment {
     MY_NAME = 'Mary'
