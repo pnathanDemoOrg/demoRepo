@@ -32,10 +32,7 @@ pipeline {
             sleep(time: 20, unit: 'SECONDS')
           }
         }
-      }
-    }
-
-             stage('Maven8 Container') {
+      stage('Maven8 Container') {
             agent { label 'jdk9' }
             steps {
               container('maven8') {
@@ -43,6 +40,7 @@ pipeline {
               }
             }
           }
+}
   }
   environment {
     MY_NAME = 'Mary'
